@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package restaurant.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service RestaurantService {
+  rpc CreateRestaurant(CreateRestaurantRequest) returns (CreateRestaurantResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/restaurants"
+      body: "*"
+      response_body: "restaurant"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Create a restaurant"
+      description: "Creates a new restaurant in the system."
+      tags: "Restaurants"
+    };
+  }
+}
+
+message CreateRestaurantRequest {
+  string name = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message CreateRestaurantResponse {
+  Restaurant restaurant = 1;
+}
+
+message Restaurant {
+  string id = 1;
+  string name = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
