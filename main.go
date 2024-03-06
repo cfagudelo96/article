@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/cfagudelo96/article/core/restaurant"
 	restaurantstore "github.com/cfagudelo96/article/core/restaurant/store"
 	"github.com/cfagudelo96/article/gateway"
 	restauranthdlr "github.com/cfagudelo96/article/handlers/restaurant"
@@ -68,7 +70,8 @@ func run(ctx context.Context) error {
 	s := grpc.NewServer()
 
 	rs := restaurantstore.NewStore(dbConn)
-	rh, err := restauranthdlr.NewHandler(rs)
+	rc := restaurant.NewCore(rs)
+	rh, err := restauranthdlr.NewHandler(rc)
 	if err != nil {
 		return fmt.Errorf("initializing handler: %w", err)
 	}
@@ -113,7 +116,7 @@ func buildDBConnection(ctx context.Context, conf config) (*pgx.Conn, error) {
 	if err != nil {
 		return nil, fmt.Errorf("initializing migrator: %w", err)
 	}
-	if err = m.Up(); err != nil {
+	if err = m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return nil, fmt.Errorf("applying migrations: %w", err)
 	}
 	conn, err := pgx.Connect(ctx, dbURL)
