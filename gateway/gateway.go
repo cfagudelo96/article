@@ -6,12 +6,18 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	restaurantv1 "github.com/cfagudelo96/article/proto/restaurant/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/grpclog"
+)
+
+const (
+	idleTimeout       = 30 * time.Second
+	readHeaderTimeout = 2 * time.Second
 )
 
 func Run(dialAddr string) error {
@@ -30,17 +36,26 @@ func Run(dialAddr string) error {
 	}
 
 	gwmux := runtime.NewServeMux()
-	restaurantv1.RegisterRestaurantServiceHandler(ctx, gwmux, conn)
+	if err = restaurantv1.RegisterRestaurantServiceHandler(ctx, gwmux, conn); err != nil {
+		return fmt.Errorf("registering restaurant handler: %w", err)
+	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "11000"
 	}
 	gatewayAddr := "0.0.0.0:" + port
 	gwServer := &http.Server{
-		Addr: gatewayAddr,
+		ReadTimeout:       1 * time.Second,
+		WriteTimeout:      1 * time.Second,
+		IdleTimeout:       idleTimeout,
+		ReadHeaderTimeout: readHeaderTimeout,
+		Addr:              gatewayAddr,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			gwmux.ServeHTTP(w, r)
 		}),
 	}
-	return gwServer.ListenAndServe()
+	if err = gwServer.ListenAndServe(); err != nil {
+		return fmt.Errorf("serving gateway: %w", err)
+	}
+	return nil
 }
