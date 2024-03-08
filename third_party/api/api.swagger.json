@@ -1,0 +1,114 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Restaurant service",
+    "version": "1.0"
+  },
+  "tags": [
+    {
+      "name": "RestaurantService"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/restaurants": {
+      "post": {
+        "summary": "Create a restaurant",
+        "description": "Creates a new restaurant in the system.",
+        "operationId": "RestaurantService_CreateRestaurant",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/v1Restaurant"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/v1ErrorResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateRestaurantRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Restaurants"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "v1CreateRestaurantRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "v1CreateRestaurantResponse": {
+      "type": "object",
+      "properties": {
+        "restaurant": {
+          "$ref": "#/definitions/v1Restaurant"
+        }
+      }
+    },
+    "v1ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "traceId": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Restaurant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    }
+  }
+}

@@ -7,7 +7,7 @@ managed:
       - buf.build/googleapis/googleapis
       - buf.build/grpc-ecosystem/grpc-gateway
       - buf.build/bufbuild/protovalidate
-plugins:
+plugins:    
   - plugin: buf.build/protocolbuffers/go:v1.30.0
     out: proto
     opt: paths=source_relative
@@ -18,4 +18,8 @@ plugins:
     out: proto
     opt: paths=source_relative
   - plugin: buf.build/grpc-ecosystem/openapiv2:v2.15.2
-    out: third_party/OpenAPI
+    out: third_party/api
+    opt:
+      - allow_merge=true
+      - merge_file_name=api
+      - disable_default_errors=true

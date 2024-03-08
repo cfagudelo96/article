@@ -4,8 +4,28 @@ package restaurant.v1;
 
 import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
 import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Restaurant service";
+    version: "1.0";
+  };
+  schemes: HTTPS;
+  consumes: "application/json";
+  produces: "application/json";
+  responses: {
+    key: "default";
+    value: {
+      description: "Error";
+      schema: {
+        json_schema: {ref: ".api.v1.ErrorResponse"}
+      }
+    }
+  }
+};
 
 service RestaurantService {
   rpc CreateRestaurant(CreateRestaurantRequest) returns (CreateRestaurantResponse) {
@@ -23,7 +43,7 @@ service RestaurantService {
 }
 
 message CreateRestaurantRequest {
-  string name = 1 [(buf.validate.field).string.min_len = 1];
+  string name = 1 [(buf.validate.field).string.min_len = 1, (google.api.field_behavior) = REQUIRED];
 }
 
 message CreateRestaurantResponse {
@@ -31,8 +51,8 @@ message CreateRestaurantResponse {
 }
 
 message Restaurant {
-  string id = 1;
+  string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string name = 2;
-  google.protobuf.Timestamp created_at = 3;
-  google.protobuf.Timestamp updated_at = 4;
+  google.protobuf.Timestamp created_at = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
 }

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package api.v1;
+
+message ErrorResponse {
+  string trace_id = 1;
+  string error = 2;
+  string message = 3;
+}
