@@ -1,12 +1,15 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Restaurant service",
+    "title": "Restaurants",
     "version": "1.0"
   },
   "tags": [
     {
       "name": "RestaurantService"
+    },
+    {
+      "name": "ReservationService"
     }
   ],
   "schemes": [
@@ -19,6 +22,40 @@
     "application/json"
   ],
   "paths": {
+    "/api/v1/reservation": {
+      "post": {
+        "summary": "Creates new reservation",
+        "description": "Creates a new reservation in the restaurant.",
+        "operationId": "ReservationService_CreateReservation",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/v1Reservation"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/v1ErrorResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateReservationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Reservations"
+        ]
+      }
+    },
     "/api/v1/restaurants": {
       "post": {
         "summary": "Create a restaurant",
@@ -55,6 +92,44 @@
     }
   },
   "definitions": {
+    "v1Client": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateReservationRequest": {
+      "type": "object",
+      "properties": {
+        "restaurantId": {
+          "type": "string"
+        },
+        "client": {
+          "$ref": "#/definitions/v1Client"
+        },
+        "guests": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "v1CreateReservationResponse": {
+      "type": "object",
+      "properties": {
+        "reservation": {
+          "$ref": "#/definitions/v1Reservation"
+        }
+      }
+    },
     "v1CreateRestaurantRequest": {
       "type": "object",
       "properties": {
@@ -85,6 +160,34 @@
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "v1Reservation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "restaurantId": {
+          "type": "string"
+        },
+        "client": {
+          "$ref": "#/definitions/v1Client"
+        },
+        "guests": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
         }
       }
     },

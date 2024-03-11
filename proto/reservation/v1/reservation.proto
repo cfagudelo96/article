@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package reservation.v1;
+
+import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service ReservationService {
+  rpc CreateReservation(CreateReservationRequest) returns (CreateReservationResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/reservation"
+      body: "*"
+      response_body: "reservation"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "Creates new reservation"
+      description: "Creates a new reservation in the restaurant."
+      tags: "Reservations"
+    };
+  }
+}
+
+message CreateReservationRequest {
+  string restaurant_id = 1 [(buf.validate.field).string.uuid = true];
+  Client client = 2;
+  int32 guests = 3 [
+    (buf.validate.field).int32.gte = 1,
+    (buf.validate.field).int32.lte = 6
+  ];
+  google.protobuf.Timestamp time = 4;
+}
+
+message CreateReservationResponse {
+  Reservation reservation = 1;
+}
+
+message Reservation {
+  string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string restaurant_id = 2 [(buf.validate.field).string.uuid = true];
+  Client client = 3;
+  int32 guests = 4 [
+    (buf.validate.field).int32.gte = 1,
+    (buf.validate.field).int32.lte = 6
+  ];
+  google.protobuf.Timestamp time = 5;
+  google.protobuf.Timestamp created_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message Client {
+  string name = 1 [(buf.validate.field).string.min_len = 1];
+  string email = 2 [(buf.validate.field).string.email = true];
+}
