@@ -2,8 +2,11 @@ package restaurant
 
 import (
 	"context"
+	"errors"
 	"fmt"
 )
+
+var ErrNotFound = errors.New("restaurant not found")
 
 type Storer interface {
 	CreateRestaurant(ctx context.Context, r Restaurant) error

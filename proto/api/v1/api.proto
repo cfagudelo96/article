@@ -2,8 +2,36 @@ syntax = "proto3";
 
 package api.v1;
 
+import "buf/validate/validate.proto";
+
 message ErrorResponse {
   string trace_id = 1;
   string error = 2;
   string message = 3;
+}
+
+enum Day {
+  UNKNOWN = 0;
+  MONDAY = 1;
+  TUESDAY = 2;
+  WEDNESDAY = 3;
+  THURSDAY = 4;
+  FRIDAY = 5;
+  SATURDAY = 6;
+  SUNDAY = 7;
+}
+
+message Time {
+  int32 hour = 1 [
+    (buf.validate.field).int32.gte = 0,
+    (buf.validate.field).int32.lte = 24
+  ];
+  int32 minute = 2 [(buf.validate.field).int32 = {
+    in: [
+      0,
+      15,
+      30,
+      45
+    ]
+  }];
 }

@@ -9,3 +9,7 @@ breaking:
 lint:
   use:
     - DEFAULT
+  except:
+    - ENUM_ZERO_VALUE_SUFFIX
+    - ENUM_VALUE_PREFIX
+    - ENUM_PASCAL_CASE

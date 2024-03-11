@@ -135,6 +135,13 @@
       "properties": {
         "name": {
           "type": "string"
+        },
+        "schedule": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Schedule"
+          }
         }
       },
       "required": [
@@ -148,6 +155,20 @@
           "$ref": "#/definitions/v1Restaurant"
         }
       }
+    },
+    "v1Day": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY"
+      ],
+      "default": "UNKNOWN"
     },
     "v1ErrorResponse": {
       "type": "object",
@@ -201,6 +222,13 @@
         "name": {
           "type": "string"
         },
+        "schedule": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Schedule"
+          }
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time",
@@ -210,6 +238,33 @@
           "type": "string",
           "format": "date-time",
           "readOnly": true
+        }
+      }
+    },
+    "v1Schedule": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "$ref": "#/definitions/v1Day"
+        },
+        "startTime": {
+          "$ref": "#/definitions/v1Time"
+        },
+        "endTime": {
+          "$ref": "#/definitions/v1Time"
+        }
+      }
+    },
+    "v1Time": {
+      "type": "object",
+      "properties": {
+        "hour": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "minute": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     }

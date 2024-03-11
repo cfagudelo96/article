@@ -24,7 +24,7 @@ func NewHandler(c *restaurant.Core) (*Handler, error) {
 		),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("initializing handler: %w", err)
+		return nil, fmt.Errorf("initializing protovalidate: %w", err)
 	}
 	return &Handler{
 		validator:  v,

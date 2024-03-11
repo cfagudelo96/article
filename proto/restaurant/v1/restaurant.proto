@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package restaurant.v1;
 
+import "api/v1/api.proto";
 import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
@@ -47,6 +48,7 @@ message CreateRestaurantRequest {
     (buf.validate.field).string.min_len = 1,
     (google.api.field_behavior) = REQUIRED
   ];
+  repeated Schedule schedule = 2 [(buf.validate.field).repeated.min_items = 1];
 }
 
 message CreateRestaurantResponse {
@@ -56,6 +58,13 @@ message CreateRestaurantResponse {
 message Restaurant {
   string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string name = 2;
+  repeated Schedule schedule = 5 [(buf.validate.field).repeated.min_items = 1];
   google.protobuf.Timestamp created_at = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
   google.protobuf.Timestamp updated_at = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message Schedule {
+  api.v1.Day day = 1 [(buf.validate.field).enum.defined_only = true];
+  api.v1.Time start_time = 2;
+  api.v1.Time end_time = 3;
 }
