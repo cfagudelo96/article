@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package reservation.v1;
 
+import "api/v1/api.proto";
 import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
@@ -45,7 +46,7 @@ message Reservation {
     (buf.validate.field).int32.gte = 1,
     (buf.validate.field).int32.lte = 6
   ];
-  google.protobuf.Timestamp time = 5;
+  api.v1.Time time = 5;
   google.protobuf.Timestamp created_at = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
@@ -53,3 +54,9 @@ message Client {
   string name = 1 [(buf.validate.field).string.min_len = 1];
   string email = 2 [(buf.validate.field).string.email = true];
 }
+
+message UnavailableTimeError {
+  repeated api.v1.Time available_times = 1;
+}
+
+message NotFoundError {}

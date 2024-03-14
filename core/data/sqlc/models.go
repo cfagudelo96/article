@@ -11,6 +11,7 @@ import (
 type Restaurant struct {
 	ID          pgtype.UUID
 	Name        string
+	Schedule    []byte
 	CreatedAt   pgtype.Timestamptz
 	UpdatedAt   pgtype.Timestamptz
 	Deactivaded bool

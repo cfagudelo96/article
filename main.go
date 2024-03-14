@@ -21,8 +21,11 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5"
 	"github.com/kelseyhightower/envconfig"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/status"
 )
 
 type config struct {
@@ -89,6 +92,28 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("running gateway: %w", err)
 	}
 	return nil
+}
+
+func interceptError(
+	ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler,
+) (any, error) {
+	resp, err := handler(ctx, req)
+	if err == nil {
+		return resp, nil
+	}
+	s, ok := status.FromError(err)
+	if !ok {
+		s = status.New(codes.Internal, "Unexpected error")
+		d := &errdetails.DebugInfo{
+			Detail: err.Error(),
+		}
+		s, err = s.WithDetails(d)
+		if err != nil {
+			return nil, status.New(codes.Internal, "Unexpected error").Err()
+		}
+		return nil, s.Err()
+	}
+	return nil, s.Err()
 }
 
 func buildDBConnection(ctx context.Context, conf config) (*pgx.Conn, error) {

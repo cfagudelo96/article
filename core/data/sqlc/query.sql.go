@@ -13,13 +13,14 @@ import (
 
 const createRestaurant = `-- name: CreateRestaurant :exec
 insert into restaurant (
-    id, name, created_at, updated_at
-) values ($1, $2, $3, $4)
+    id, name, schedule, created_at, updated_at
+) values ($1, $2, $3, $4, $5)
 `
 
 type CreateRestaurantParams struct {
 	ID        pgtype.UUID
 	Name      string
+	Schedule  []byte
 	CreatedAt pgtype.Timestamptz
 	UpdatedAt pgtype.Timestamptz
 }
@@ -28,6 +29,7 @@ func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantPara
 	_, err := q.db.Exec(ctx, createRestaurant,
 		arg.ID,
 		arg.Name,
+		arg.Schedule,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 	)

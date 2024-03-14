@@ -5,26 +5,27 @@ import (
 	"fmt"
 
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/cfagudelo96/article/handlers"
 	reservationv1 "github.com/cfagudelo96/article/proto/reservation/v1"
 )
 
 var _ reservationv1.ReservationServiceServer = (*Handler)(nil)
 
 type Handler struct {
-	validator *protovalidate.Validator
+	*handlers.ValidatorHandler
 }
 
 func NewHandler() (*Handler, error) {
-	v, err := protovalidate.New(
+	vh, err := handlers.NewValidatorHandler(
 		protovalidate.WithMessages(
 			&reservationv1.CreateReservationRequest{},
 		),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("initializing protovalidate: %w", err)
+		return nil, fmt.Errorf("initializing validator handler: %w", err)
 	}
 	return &Handler{
-		validator: v,
+		ValidatorHandler: vh,
 	}, nil
 }
 

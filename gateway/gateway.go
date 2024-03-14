@@ -35,7 +35,9 @@ func Run(dialAddr string) error {
 		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
-	gwmux := runtime.NewServeMux()
+	gwmux := runtime.NewServeMux(
+		runtime.WithErrorHandler(runtime.DefaultHTTPErrorHandler),
+	)
 	if err = restaurantv1.RegisterRestaurantServiceHandler(ctx, gwmux, conn); err != nil {
 		return fmt.Errorf("registering restaurant handler: %w", err)
 	}
@@ -45,8 +47,8 @@ func Run(dialAddr string) error {
 	}
 	gatewayAddr := "0.0.0.0:" + port
 	gwServer := &http.Server{
-		ReadTimeout:       1 * time.Second,
-		WriteTimeout:      1 * time.Second,
+		ReadTimeout:       5 * time.Second,
+		WriteTimeout:      5 * time.Second,
 		IdleTimeout:       idleTimeout,
 		ReadHeaderTimeout: readHeaderTimeout,
 		Addr:              gatewayAddr,

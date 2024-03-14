@@ -37,7 +37,7 @@
           "default": {
             "description": "Error",
             "schema": {
-              "$ref": "#/definitions/v1ErrorResponse"
+              "$ref": ".api.v1.ErrorResponse"
             }
           }
         },
@@ -71,7 +71,7 @@
           "default": {
             "description": "Error",
             "schema": {
-              "$ref": "#/definitions/v1ErrorResponse"
+              "$ref": ".api.v1.ErrorResponse"
             }
           }
         },
@@ -136,12 +136,8 @@
         "name": {
           "type": "string"
         },
-        "schedule": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Schedule"
-          }
+        "weeklySchedule": {
+          "$ref": "#/definitions/v1WeeklySchedule"
         }
       },
       "required": [
@@ -153,34 +149,6 @@
       "properties": {
         "restaurant": {
           "$ref": "#/definitions/v1Restaurant"
-        }
-      }
-    },
-    "v1Day": {
-      "type": "string",
-      "enum": [
-        "UNKNOWN",
-        "MONDAY",
-        "TUESDAY",
-        "WEDNESDAY",
-        "THURSDAY",
-        "FRIDAY",
-        "SATURDAY",
-        "SUNDAY"
-      ],
-      "default": "UNKNOWN"
-    },
-    "v1ErrorResponse": {
-      "type": "object",
-      "properties": {
-        "traceId": {
-          "type": "string"
-        },
-        "error": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
         }
       }
     },
@@ -202,8 +170,7 @@
           "format": "int32"
         },
         "time": {
-          "type": "string",
-          "format": "date-time"
+          "$ref": "#/definitions/v1Time"
         },
         "createdAt": {
           "type": "string",
@@ -222,12 +189,8 @@
         "name": {
           "type": "string"
         },
-        "schedule": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Schedule"
-          }
+        "weeklySchedule": {
+          "$ref": "#/definitions/v1WeeklySchedule"
         },
         "createdAt": {
           "type": "string",
@@ -244,13 +207,10 @@
     "v1Schedule": {
       "type": "object",
       "properties": {
-        "day": {
-          "$ref": "#/definitions/v1Day"
-        },
-        "startTime": {
+        "opensAt": {
           "$ref": "#/definitions/v1Time"
         },
-        "endTime": {
+        "closesAt": {
           "$ref": "#/definitions/v1Time"
         }
       }
@@ -265,6 +225,32 @@
         "minute": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "v1WeeklySchedule": {
+      "type": "object",
+      "properties": {
+        "monday": {
+          "$ref": "#/definitions/v1Schedule"
+        },
+        "tuesday": {
+          "$ref": "#/definitions/v1Schedule"
+        },
+        "wednesday": {
+          "$ref": "#/definitions/v1Schedule"
+        },
+        "thursday": {
+          "$ref": "#/definitions/v1Schedule"
+        },
+        "friday": {
+          "$ref": "#/definitions/v1Schedule"
+        },
+        "saturday": {
+          "$ref": "#/definitions/v1Schedule"
+        },
+        "sunday": {
+          "$ref": "#/definitions/v1Schedule"
         }
       }
     }

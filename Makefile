@@ -7,7 +7,7 @@ buf.mod:
 buf.lint: buf.format
 	buf lint proto
 
-buf.generate: buf.lint
+buf.gen: buf.lint
 	buf generate
 
 docker.db:

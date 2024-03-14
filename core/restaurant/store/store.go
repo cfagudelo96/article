@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/cfagudelo96/article/core/data/sqlc"
@@ -22,13 +23,18 @@ func NewStore(connection *pgx.Conn) *Store {
 
 func (s *Store) CreateRestaurant(ctx context.Context, r restaurant.Restaurant) error {
 	querier := sqlc.New(s.connection)
+	scheduleAsJSON, err := json.Marshal(r.WeeklySchedule)
+	if err != nil {
+		return fmt.Errorf("marshalling schedule as JSON: %w", err)
+	}
 	params := sqlc.CreateRestaurantParams{
 		ID:        pgtype.UUID{Bytes: r.ID, Valid: true},
 		Name:      r.Name,
+		Schedule:  scheduleAsJSON,
 		CreatedAt: pgtype.Timestamptz{Time: r.CreatedAt, Valid: true},
 		UpdatedAt: pgtype.Timestamptz{Time: r.UpdatedAt, Valid: true},
 	}
-	if err := querier.CreateRestaurant(ctx, params); err != nil {
+	if err = querier.CreateRestaurant(ctx, params); err != nil {
 		return fmt.Errorf("inserting in db: %w", err)
 	}
 	return nil

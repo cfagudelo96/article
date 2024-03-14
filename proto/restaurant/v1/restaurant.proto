@@ -48,7 +48,7 @@ message CreateRestaurantRequest {
     (buf.validate.field).string.min_len = 1,
     (google.api.field_behavior) = REQUIRED
   ];
-  repeated Schedule schedule = 2 [(buf.validate.field).repeated.min_items = 1];
+  WeeklySchedule weekly_schedule = 2 [(buf.validate.field).required = true];
 }
 
 message CreateRestaurantResponse {
@@ -58,13 +58,36 @@ message CreateRestaurantResponse {
 message Restaurant {
   string id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
   string name = 2;
-  repeated Schedule schedule = 5 [(buf.validate.field).repeated.min_items = 1];
-  google.protobuf.Timestamp created_at = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
-  google.protobuf.Timestamp updated_at = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  WeeklySchedule weekly_schedule = 3;
+  google.protobuf.Timestamp created_at = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp updated_at = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message WeeklySchedule {
+  Schedule monday = 1;
+  Schedule tuesday = 2;
+  Schedule wednesday = 3;
+  Schedule thursday = 4;
+  Schedule friday = 5;
+  Schedule saturday = 6;
+  Schedule sunday = 7;
+
+  option (buf.validate.message).cel = {
+    id: "weekly_schedule.at_least_one_defined",
+    message: "At least one day must have its schedule defined",
+    expression: "has(this.monday) || has(this.tuesday) || has(this.wednesday) || has(this.thursday) || has(this.friday) || has(this.saturday) || has(this.sunday)"
+  };
 }
 
 message Schedule {
-  api.v1.Day day = 1 [(buf.validate.field).enum.defined_only = true];
-  api.v1.Time start_time = 2;
-  api.v1.Time end_time = 3;
+  api.v1.Time opens_at = 2;
+  api.v1.Time closes_at = 3;
+
+  option (buf.validate.message).cel = {
+    id: "schedule.closes_at_after",
+    message: "The time for closes_at must be after opens_at",
+    expression: "this.closes_at.hour > this.opens_at.hour || (this.closes_at.hour == this.opens_at.hour && this.closes_at.minute > this.opens_at.minute)"
+  };
 }
+
+message NotFoundError {}
