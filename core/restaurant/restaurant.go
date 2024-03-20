@@ -8,6 +8,8 @@ import (
 
 var ErrNotFound = errors.New("restaurant not found")
 
+//go:generate mockgen -source=restaurant.go -destination=mocks/mocks.go Storer
+
 type Storer interface {
 	CreateRestaurant(ctx context.Context, r Restaurant) error
 }
