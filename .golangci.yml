@@ -66,6 +66,7 @@ issues:
     - path: (.+)_test.go
       linters:
         - funlen
+        - gochecknoglobals
 
 linters:
   disable-all: true

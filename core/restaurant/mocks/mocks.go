@@ -14,6 +14,7 @@ import (
 	reflect "reflect"
 
 	restaurant "github.com/cfagudelo96/article/core/restaurant"
+	restaurantv1 "github.com/cfagudelo96/article/proto/restaurant/v1"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -52,4 +53,18 @@ func (m *MockStorer) CreateRestaurant(ctx context.Context, r restaurant.Restaura
 func (mr *MockStorerMockRecorder) CreateRestaurant(ctx, r any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRestaurant", reflect.TypeOf((*MockStorer)(nil).CreateRestaurant), ctx, r)
+}
+
+// CreateRestaurantPointer mocks base method.
+func (m *MockStorer) CreateRestaurantPointer(ctx context.Context, r *restaurantv1.Restaurant) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateRestaurantPointer", ctx, r)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateRestaurantPointer indicates an expected call of CreateRestaurantPointer.
+func (mr *MockStorerMockRecorder) CreateRestaurantPointer(ctx, r any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRestaurantPointer", reflect.TypeOf((*MockStorer)(nil).CreateRestaurantPointer), ctx, r)
 }

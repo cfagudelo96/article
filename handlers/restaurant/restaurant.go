@@ -47,3 +47,18 @@ func (h *Handler) CreateRestaurant(
 		Restaurant: toProtoRestaurant(r),
 	}, nil
 }
+
+func (h *Handler) CreateRestaurantPointer(
+	ctx context.Context, pbreq *restaurantv1.CreateRestaurantRequest,
+) (*restaurantv1.CreateRestaurantResponse, error) {
+	if err := h.Validate(pbreq); err != nil {
+		return nil, fmt.Errorf("validating request: %w", err)
+	}
+	r, err := h.restaurant.CreatePointer(ctx, pbreq)
+	if err != nil {
+		return nil, fmt.Errorf("creating restaurant: %w", err)
+	}
+	return &restaurantv1.CreateRestaurantResponse{
+		Restaurant: r,
+	}, nil
+}

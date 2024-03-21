@@ -3,7 +3,9 @@ package restaurant
 import (
 	"time"
 
+	restaurantv1 "github.com/cfagudelo96/article/proto/restaurant/v1"
 	"github.com/google/uuid"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Day int
@@ -49,6 +51,17 @@ func (r CreateRequest) ToRestaurant() Restaurant {
 		ID:             uuid.New(),
 		Name:           r.Name,
 		WeeklySchedule: r.WeeklySchedule,
+		CreatedAt:      now,
+		UpdatedAt:      now,
+	}
+}
+
+func createRestaurantRequestToRestaurant(req *restaurantv1.CreateRestaurantRequest) *restaurantv1.Restaurant {
+	now := timestamppb.Now()
+	return &restaurantv1.Restaurant{
+		Id:             uuid.NewString(),
+		Name:           req.GetName(),
+		WeeklySchedule: req.GetWeeklySchedule(),
 		CreatedAt:      now,
 		UpdatedAt:      now,
 	}

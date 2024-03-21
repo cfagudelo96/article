@@ -125,6 +125,70 @@ func TestCreateRestaurant(t *testing.T) {
 	}
 }
 
+var blackhole *restaurantv1.CreateRestaurantResponse
+
+func BenchmarkCreateRestaurant(b *testing.B) {
+	ctx := context.Background()
+	c := restaurant.NewCore(&MockStorer{})
+	h, err := restauranthdlr.NewHandler(c)
+	if err != nil {
+		b.Fatal(err)
+	}
+	req := &restaurantv1.CreateRestaurantRequest{
+		Name: "McTasty",
+		WeeklySchedule: &restaurantv1.WeeklySchedule{
+			Monday: &restaurantv1.Schedule{
+				OpensAt:  &apiv1.Time{Hour: 9},
+				ClosesAt: &apiv1.Time{Hour: 17},
+			},
+		},
+	}
+	for i := 0; i < b.N; i++ {
+		blackhole, err = h.CreateRestaurant(ctx, req)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkCreateRestaurantPointer(b *testing.B) {
+	ctx := context.Background()
+	c := restaurant.NewCore(&MockStorer{})
+	h, err := restauranthdlr.NewHandler(c)
+	if err != nil {
+		b.Fatal(err)
+	}
+	req := &restaurantv1.CreateRestaurantRequest{
+		Name: "McTasty",
+		WeeklySchedule: &restaurantv1.WeeklySchedule{
+			Monday: &restaurantv1.Schedule{
+				OpensAt:  &apiv1.Time{Hour: 9},
+				ClosesAt: &apiv1.Time{Hour: 17},
+			},
+		},
+	}
+	for i := 0; i < b.N; i++ {
+		blackhole, err = h.CreateRestaurantPointer(ctx, req)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// BenchmarkCreateRestaurant-10    	  276921	      3712 ns/op	    1226 B/op	      22 allocs/op
+// BenchmarkCreateRestaurantPointer-10    	  373357	      3185 ns/op	     503 B/op	      15 allocs/op
+
+type MockStorer struct {
+}
+
+func (m *MockStorer) CreateRestaurant(_ context.Context, _ restaurant.Restaurant) error {
+	return nil
+}
+
+func (m *MockStorer) CreateRestaurantPointer(_ context.Context, _ *restaurantv1.Restaurant) error {
+	return nil
+}
+
 func buildTestHandler(t *testing.T) *testHandler {
 	ctrl := gomock.NewController(t)
 	storerMock := mock_restaurant.NewMockStorer(ctrl)
